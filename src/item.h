@@ -164,7 +164,7 @@ public:
           const optional<value_t>& value              = none,
           const bool               overwrite_existing = true);
 
-  virtual void parse_tags(const char * p,
+  virtual bool parse_tags(const char * p,
                           scope_t&     scope,
                           bool         overwrite_existing = true);
   virtual void append_note(const char * p,

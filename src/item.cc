@@ -144,7 +144,7 @@ item_t::set_tag(const string&            tag,
   }
 }
 
-void item_t::parse_tags(const char * p,
+bool item_t::parse_tags(const char * p,
                         scope_t&     scope,
                         bool         overwrite_existing)
 {
@@ -165,8 +165,9 @@ void item_t::parse_tags(const char * p,
             _date = parse_date(buf);
         }
       }
+      return true;
     }
-    return;
+    return false;
   }
 
   scoped_array<char> buf(new char[std::strlen(p) + 1]);
@@ -174,6 +175,7 @@ void item_t::parse_tags(const char * p,
   std::strcpy(buf.get(), p);
 
   string tag;
+  bool found_tag = false;
   bool   by_value = false;
   bool   first = true;
   for (char * q = std::strtok(buf.get(), " \t");
@@ -188,6 +190,7 @@ void item_t::parse_tags(const char * p,
         string_map::iterator i = set_tag(r, none, overwrite_existing);
         (*i).second.second = true;
       }
+      found_tag = true;
     }
     else if (first && q[len - 1] == ':') { // a metadata setting
       std::size_t index = 1;
@@ -207,10 +210,13 @@ void item_t::parse_tags(const char * p,
         i = set_tag(tag, string_value(field), overwrite_existing);
       }
       (*i).second.second = true;
+      found_tag = true;
       break;
     }
     first = false;
   }
+
+  return found_tag;
 }
 
 void item_t::append_note(const char * p,
@@ -224,7 +230,16 @@ void item_t::append_note(const char * p,
     note = p;
   }
 
-  parse_tags(p, scope, overwrite_existing);
+  // Parse Note fields
+  string buf(p);
+  std::vector<string> fields;
+  boost::split(fields, buf, boost::is_any_of("|"));
+  for (string field : fields) {
+    bool found = parse_tags(field.c_str(), scope, overwrite_existing);
+    if (!found) {
+      set_tag(string("description"), string_value(field), true);
+    }
+  }
 }
 
 namespace {

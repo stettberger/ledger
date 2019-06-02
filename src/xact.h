@@ -184,12 +184,13 @@ public:
     }
   }
 
-  virtual void parse_tags(const char * p, scope_t&,
+  virtual bool parse_tags(const char * p, scope_t&,
                           bool overwrite_existing = true) {
     if (! deferred_notes)
       deferred_notes = deferred_notes_list();
     deferred_notes->push_back(deferred_tag_data_t(p, overwrite_existing));
     deferred_notes->back().apply_to_post = active_post;
+    return false;
   }
 
   virtual void extend_xact(xact_base_t& xact, parse_context_t& context);
