@@ -330,6 +330,7 @@ public:
     HANDLER(raw).report(out);
     HANDLER(real).report(out);
     HANDLER(register_format_).report(out);
+    HANDLER(register_format_file_).report(out);
     HANDLER(related).report(out);
     HANDLER(related_all).report(out);
     HANDLER(revalued).report(out);
@@ -934,6 +935,10 @@ public:
        "             bold if should_bold))"
        " %$3 %$4 %$5\n");
   });
+
+  OPTION_(report_t, register_format_file_,
+   DO_FORMAT_FILE(register_format)
+  );
 
   OPTION(report_t, related); // -r
 

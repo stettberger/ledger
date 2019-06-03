@@ -216,6 +216,20 @@ public:
 #define DO_(var)  virtual void handler_thunk(const optional<string>& whence, \
                                              const string& var)
 
+#define DO_FORMAT_FILE(other_name)                                      \
+  DO_(file) {                                                           \
+    std::ifstream ifs(file);                                            \
+    if (!ifs) {                                                         \
+      throw_(std::runtime_error,                                        \
+             _f("Could not open file: %1%") % file);                    \
+    }                                                                   \
+    std::string content( (std::istreambuf_iterator<char>(ifs) ),        \
+                         (std::istreambuf_iterator<char>()    ) );      \
+    content.erase(std::remove(content.begin(), content.end(), '\n'),    \
+                  content.end());                                       \
+    OTHER(register_format_).on(whence, content);                        \
+   }
+
 #define END(name) name ## handler
 
 #define COPY_OPT(name, other) name ## handler(other.name ## handler)

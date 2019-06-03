@@ -1259,6 +1259,7 @@ option_t<report_t> * report_t::lookup_option(const char * p)
     OPT(raw);
     else OPT(real);
     else OPT(register_format_);
+    else OPT(register_format_file_);
     else OPT_(related);
     else OPT(related_all);
     else OPT(revalued);
